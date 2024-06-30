@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "auditory-intention-decoding-data-analysis"
+version = "0.1.0"
+description = ""
+authors = ["Michal Robert Zak"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+mne = "^1.7.1"
+mne-qt-browser = "^0.6.3"
+PyQt6 = "^6.7.0"
+numpy = "^2.0.0"
+matplotlib = "^3.9.0"
+click = "^8.1.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
