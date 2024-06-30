@@ -4,7 +4,7 @@
 
 PROJECT_NAME = auditory-intention-decoding-data-analysis
 PYTHON_VERSION = 3.11
-PYTHON_INTERPRETER = python
+PYTHON_INTERPRETER = poetry run python
 
 #################################################################################
 # COMMANDS                                                                      #
@@ -14,9 +14,7 @@ PYTHON_INTERPRETER = python
 ## Install Python Dependencies
 .PHONY: requirements
 requirements:
-	$(PYTHON_INTERPRETER) -m pip install -U pip
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
-	
+	poetry install
 
 
 
@@ -25,21 +23,6 @@ requirements:
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
-
-## Lint using flake8 and black (use `make format` to do formatting)
-.PHONY: lint
-lint:
-	flake8 auditory_intention_decoding_data_analysis
-	isort --check --diff --profile black auditory_intention_decoding_data_analysis
-	black --check --config pyproject.toml auditory_intention_decoding_data_analysis
-
-## Format source code with black
-.PHONY: format
-format:
-	black --config pyproject.toml auditory_intention_decoding_data_analysis
-
-
-
 
 
 
