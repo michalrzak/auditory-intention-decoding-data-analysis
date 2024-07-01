@@ -6,7 +6,7 @@ authors = ["Michal Robert Zak"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "~3.11"
 mne = "^1.7.1"
 mne-qt-browser = "^0.6.3"
 PyQt6 = "^6.7.0"
@@ -16,6 +16,7 @@ typer = "^0.12.3"
 loguru = "^0.7.2"
 python-dotenv = "^1.0.1"
 tqdm = "^4.66.4"
+braindecode = "^0.8.1"
 
 
 [build-system]
