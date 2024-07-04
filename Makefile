@@ -40,7 +40,7 @@ PROCESSED_FILES := $(foreach file, $(RAW_FILES), $(shell echo $(file) | sed 's|d
 ## Make Dataset
 data: requirements $(RE_REFERENCED_FILES) $(PROCESSED_FILES)
 data/processed/%-average_reference.fif: data/raw/sub-*/ses-*/%.vhdr
-	$(PYTHON_INTERPRETER) auditory_intention_decoding_data_analysis/dataset.py $< $ true
+	$(PYTHON_INTERPRETER) auditory_intention_decoding_data_analysis/dataset.py $< $@ true
 data/processed/%.fif: data/raw/sub-*/ses-*/%.vhdr
 	$(PYTHON_INTERPRETER) auditory_intention_decoding_data_analysis/dataset.py $< $@ false
 
