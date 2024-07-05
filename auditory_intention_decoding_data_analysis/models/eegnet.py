@@ -22,7 +22,7 @@ a = EEGNetv4(n_chans=126,
              sfreq=1000)
 
 cuda = torch.cuda.is_available()
-device = "cuda" if cuda else "cpu"
+device = "cpu"  # "cuda" if cuda else "cpu"
 
 # Set random seed to be able to reproduce results
 seed = 42
