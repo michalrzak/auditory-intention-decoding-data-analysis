@@ -1,6 +1,7 @@
 import csv
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 import mne
 import numpy as np
@@ -32,21 +33,25 @@ def main(
         input_file: Path,
         output_file: Path,
         tmin: float,
-        tmax: float
+        tmax: float,
+        sfreq: Optional[int] = None
 ):
-    tmin = float(tmin)
-    tmax = float(tmax)
+    # tmin = float(tmin)
+    # tmax = float(tmax)
 
     assert input_file.is_file()
     assert input_file.suffix == ".fif"
     assert output_file.name.endswith("-epo.fif")
 
     logger.info(f"Started building features (extracting mne Epochs from: {input_file}")
-    raw = mne.io.read_raw_fif(input_file)
+    raw: mne.io.Raw = mne.io.read_raw_fif(input_file)
+    if sfreq is not None:
+        raw.load_data()
+        raw.resample(sfreq)
 
     logger.info("Extracting events")
     events, event_id = mne.events_from_annotations(raw)
-    epochs = mne.Epochs(raw, events, event_id, tmin=tmin, tmax=tmax, baseline=(None, 0))
+    epochs = mne.Epochs(raw, events, event_id, tmin=tmin, tmax=tmax, baseline=(None, 0), event_repeated="drop")
 
     epochs_options: mne.Epochs = epochs[[f"Stimulus/S {triggers.option}" for triggers in TRIGGERS.values()]]
     epochs_targets: mne.Epochs = epochs[[f"Stimulus/S {triggers.target}" for triggers in TRIGGERS.values()]]
