@@ -62,9 +62,9 @@ def main(
     logger.info("Saving epochs")
     epochs_combined.save(output_file, overwrite=True)
     with open(file_to_label_file(output_file), "w") as file:
-        writer = csv.writer(file)
-        writer.writerow(["Label"])
-        writer.writerows([[int(ele)] for ele in labels])
+        writer = csv.writer(file, lineterminator="\n")
+        writer.writerow(["Target", "Tagger"])
+        writer.writerows([[int(ele), ] for ele in labels])
 
 
 if __name__ == '__main__':
