@@ -74,15 +74,15 @@ EEGNET_MICHAL := "results/eegnet/all-michal"
 train-eegnet: $(EEGNET_TARGETS) $(EEGNET_ALL) $(EEGNET_MICHAL)
 results/eegnet/%: data/interim/samples/%-epo.fif
 	mkdir -p $@
-	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $^ $@
+	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $^ $@ 200
 	touch $@
 $(EEGNET_ALL): $(SAMPLES_TARGETS)
 	mkdir -p $@
-	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $^ $@
+	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $^ $@ 600
 	touch $@
 $(EEGNET_MICHAL): data/interim/samples/sub-michal_ses-01-epo.fif data/interim/samples/sub-michal_ses-02-epo.fif data/interim/samples/sub-michal_ses-03-epo.fif
 	mkdir -p $@
-	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $^ $@
+	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $^ $@ 500
 	touch $@
 #--------------------------------------------------------------------------------
 

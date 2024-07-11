@@ -35,6 +35,7 @@ def read_labels_file(labels_file: Path) -> pd.DataFrame:
 def main(
         input_files: List[Path],
         output_folder: Path,
+        n_epochs: int
 ):
     labels_files = [file_to_label_file(input_file) for input_file in input_files]
 
@@ -78,7 +79,7 @@ def main(
         model: Model = EEGNet(2, 126, int(3.5 * 128 + 1))  # TODO: parameters
         model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=0.001), metrics=['accuracy'])
 
-        history = model.fit(data_train_scaled_shaped, labels_train, epochs=500, batch_size=32, verbose=1)
+        history = model.fit(data_train_scaled_shaped, labels_train, epochs=n_epochs, batch_size=32, verbose=1)
         histories.append(history.history)
 
         argmax_labels = np.argmax(labels_test, axis=1)
