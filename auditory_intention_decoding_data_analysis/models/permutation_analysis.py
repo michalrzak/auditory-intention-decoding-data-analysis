@@ -85,10 +85,12 @@ larger_count = {pair: 0 for pair in baseline_differences}
 for i in range(n_permutations):
     cdf = prediction_dfs[0].copy()
 
-    cdf["taggers"] = np.random.permutation(cdf["taggers"])
+    cdf["taggers"] = rng.permutation(cdf["taggers"])
     accuracy = get_accuracy(cdf)
     # print_with_separator(accuracy)
 
     differences = build_difference_map(accuracy, set(cdf["taggers"]))
-    larger_count = {pair: larger_count[pair] + int(baseline_differences[pair] > differences[pair])
+    larger_count = {pair: larger_count[pair] + int(abs(differences[pair]) > abs(baseline_differences[pair]))
                     for pair in differences}
+
+    larger_proportion = {pair: larger_count[pair] / n_permutations for pair in larger_count}
