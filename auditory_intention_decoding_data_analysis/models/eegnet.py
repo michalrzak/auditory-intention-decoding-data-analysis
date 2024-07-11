@@ -106,7 +106,8 @@ def main(
     history_accuracies = pd.DataFrame([history["accuracy"] for history in histories]).melt()
     history_loss = pd.DataFrame([history["loss"] for history in histories]).melt()
 
-    sns.lineplot(history_accuracies, x="variable", y="value", label="accuracy", size=(10, 20))
+    plt.figure(figsize=(20, 10))
+    sns.lineplot(history_accuracies, x="variable", y="value", label="accuracy")
     sns.lineplot(history_loss, x="variable", y="value", label="loss")
     plt.legend()
     plt.savefig(output_folder / "training_plot.png")
