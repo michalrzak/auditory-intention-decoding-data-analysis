@@ -1,5 +1,4 @@
 import pickle
-from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
@@ -15,17 +14,10 @@ from tensorflow.keras import Model
 from tensorflow.keras.optimizers import Adam
 
 from auditory_intention_decoding_data_analysis.external.EEGModels import EEGNet
-from auditory_intention_decoding_data_analysis.models.utils import file_to_label_file
+from auditory_intention_decoding_data_analysis.models.utils import Prediction, file_to_label_file
 
 mne.use_log_level("warning")
 app = typer.Typer()
-
-
-@dataclass
-class Prediction:
-    predictions: np.ndarray
-    labels: np.ndarray
-    taggers: List[str]
 
 
 def eegnet_reshape(data: np.ndarray) -> np.ndarray:
