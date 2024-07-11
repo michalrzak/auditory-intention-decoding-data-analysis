@@ -1,7 +1,7 @@
 import csv
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 import mne
 import numpy as np
@@ -32,8 +32,8 @@ TRIGGERS = {
 def main(
         input_file: Path,
         output_file: Path,
-        tmin: float,
-        tmax: float,
+        tmin: float = 0,
+        tmax: float = 3,
         sfreq: Optional[int] = None
 ):
     # tmin = float(tmin)
@@ -44,6 +44,7 @@ def main(
     assert output_file.name.endswith("-epo.fif")
 
     logger.info(f"Started building features (extracting mne Epochs from: {input_file}")
+    logger.info(f"Parameters are: tmin={tmin}, tmax={tmax}, sfreq={sfreq}")
     raw: mne.io.Raw = mne.io.read_raw_fif(input_file)
     if sfreq is not None:
         raw.load_data()
@@ -53,15 +54,16 @@ def main(
     events, event_id = mne.events_from_annotations(raw)
     epochs = mne.Epochs(raw, events, event_id, tmin=tmin, tmax=tmax, baseline=(None, 0), event_repeated="drop")
 
-    epochs_options: Dict[str, mne.Epochs] = {trigger: epochs[f"Stimulus/S {TRIGGERS[trigger].option}"] for trigger in TRIGGERS}
-    epochs_targets: Dict[str, mne.Epochs] = {trigger: epochs[f"Stimulus/S {TRIGGERS[trigger].target}"] for trigger in TRIGGERS}
+    epochs_options: Dict[str, mne.Epochs] = {trigger: epochs[f"Stimulus/S {TRIGGERS[trigger].option}"] for trigger in
+                                             TRIGGERS}
+    epochs_targets: Dict[str, mne.Epochs] = {trigger: epochs[f"Stimulus/S {TRIGGERS[trigger].target}"] for trigger in
+                                             TRIGGERS}
 
     epochs_combined = mne.epochs.concatenate_epochs([*epochs_options.values(), *epochs_targets.values()])
     labels = np.array([0] * sum([len(eo) for eo in epochs_options.values()]) +
                       [1] * sum([len(et) for et in epochs_targets.values()]))
     taggers = (sum([[tagger] * len(epochs_options[tagger]) for tagger in epochs_options.keys()], []) +
                sum([[tagger] * len(epochs_targets[tagger]) for tagger in epochs_targets.keys()], []))
-
 
     logger.info("Saving epochs")
     epochs_combined.save(output_file, overwrite=True)

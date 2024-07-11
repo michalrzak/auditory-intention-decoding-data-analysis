@@ -7,6 +7,7 @@ PYTHON_VERSION = 3.11
 PYTHON_INTERPRETER = poetry run python
 
 FIGURES = "reports/figures"
+SRC = "auditory_intention_decoding_data_analysis"
 DUMMY_FILE = ".dummy"
 
 #################################################################################
@@ -51,9 +52,38 @@ ERP_PLOT_TARGET_AVERAGE_REFERENCE := "$(FIGURES)/erp-plots-average-reference/$(D
 ## Make ERP-plots
 erp-plot: $(ERP_PLOT_TARGET) $(ERP_PLOT_TARGET_AVERAGE_REFERENCE)
 $(ERP_PLOT_TARGET): $(PROCESSED_FILES)
-	$(PYTHON_INTERPRETER) auditory_intention_decoding_data_analysis/plots/plot_erp.py $^ $@
+	$(PYTHON_INTERPRETER) $(SRC)/plots/plot_erp.py $^ $@
 $(ERP_PLOT_TARGET_AVERAGE_REFERENCE): $(RE_REFERENCED_FILES)
-	$(PYTHON_INTERPRETER) auditory_intention_decoding_data_analysis/plots/plot_erp.py $^ $@
+	$(PYTHON_INTERPRETER) $(SRC)/plots/plot_erp.py $^ $@
+#--------------------------------------------------------------------------------
+
+SAMPLES_TARGETS := $(PROCESSED_FILES:data/processed/%.fif=data/interim/samples/%-epo.fif)
+
+## Build samples to be used by eegnet
+build-samples: $(SAMPLES_TARGETS)
+data/interim/samples/%-epo.fif: data/processed/%.fif
+	mkdir -p $$(dirname $@)
+	$(PYTHON_INTERPRETER) $(SRC)/models/build_samples.py $^ $@ --sfreq 128 --tmin '-0.5' --tmax 3
+#--------------------------------------------------------------------------------
+
+EEGNET_TARGETS := $(SAMPLES_TARGETS:data/interim/samples/%-epo.fif=results/eegnet/%)
+EEGNET_ALL := "results/eegnet/all"
+EEGNET_MICHAL := "results/eegnet/all-michal"
+
+## Train EEGNet
+train-eegnet: $(EEGNET_TARGETS) $(EEGNET_ALL) $(EEGNET_MICHAL)
+results/eegnet/%: data/interim/samples/%-epo.fif
+	mkdir -p $@
+	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $< $@
+	touch $@
+$(EEGNET_ALL): $(SAMPLES_TARGETS)
+	mkdir -p $@
+	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $< $@
+	touch $@
+$(EEGNET_MICHAL): data/interim/samples/sub-michal_ses-01-epo.fif data/interim/samples/sub-michal_ses-02-epo.fif data/interim/samples/sub-michal_ses-03-epo.fif
+	mkdir -p $@
+	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $< $@
+	touch $@
 
 
 #--------------------------------------------------------------------------------
