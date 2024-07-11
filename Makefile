@@ -84,6 +84,20 @@ $(EEGNET_MICHAL): data/interim/samples/sub-michal_ses-01-epo.fif data/interim/sa
 	mkdir -p $@
 	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $^ $@
 	touch $@
+#--------------------------------------------------------------------------------
+
+PERMUTATION_ANALYSIS_TARGETS := $(EEGNET_TARGETS:results/eegnet/%=results/permutation-analysis/%.log)
+PERMUTATION_ANALYSIS_TARGETS += results/permutation-analysis/all.log
+PERMUTATION_ANALYSIS_TARGETS += results/permutation-analysis/all-michal.log
+
+debug:
+	echo $(PERMUTATION_ANALYSIS_TARGETS)
+
+## Permutation analysis
+permutation-analysis: $(PERMUTATION_ANALYSIS_TARGETS)
+results/permutation-analysis/%.log: results/eegnet/%/prediction.pkl
+	mkdir -p $$(dirname $@)
+	$(PYTHON_INTERPRETER) $(SRC)/models/permutation_analysis.py $^ | tee $@
 
 
 #--------------------------------------------------------------------------------

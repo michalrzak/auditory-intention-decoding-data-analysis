@@ -1,5 +1,4 @@
 # %% Imports
-import code
 import pickle
 from itertools import permutations
 from pathlib import Path
@@ -119,12 +118,12 @@ def main(prediction_path: Path):
     print(larger_proportion)
     print("-------------------------")
 
-    print("\n\n\n===================================")
-    print("The console now contains the following variables you to interact with:")
-    print("\tprediction_dfs: List[pd.DataFrame]; containing a list of dataframes containing the results of each CV")
-    print("\tlarger_count: Map[Tuple[str, str], int]; map containing how often the permuted tagger pair was larger")
-    print(f"\tlarger_proportion: Map[Tuple[str, str], float]; same as above but divided by {n_permutations}")
-    code.interact(local=locals())
+    # print("\n\n\n===================================")
+    # print("The console now contains the following variables you to interact with:")
+    # print("\tprediction_dfs: List[pd.DataFrame]; containing a list of dataframes containing the results of each CV")
+    # print("\tlarger_count: Map[Tuple[str, str], int]; map containing how often the permuted tagger pair was larger")
+    # print(f"\tlarger_proportion: Map[Tuple[str, str], float]; same as above but divided by {n_permutations}")
+    # code.interact(local=locals())
 
 
 if __name__ == '__main__':
