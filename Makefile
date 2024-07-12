@@ -3,7 +3,7 @@
 #################################################################################
 
 PROJECT_NAME = auditory-intention-decoding-data-analysis
-PYTHON_VERSION = 3.11
+PYTHON_VERSION = 3.8
 PYTHON_INTERPRETER = poetry run python
 
 FIGURES = "reports/figures"
@@ -14,16 +14,16 @@ DUMMY_FILE = ".dummy"
 # COMMANDS                                                                      #
 #################################################################################
 
-
 ## Install Python Dependencies
+
 requirements: poetry.lock
 poetry.lock: pyproject.toml
 	poetry install
 
 
-
-## Delete all compiled Python files
 .PHONY: clean
+## Delete all compiled Python files
+
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
@@ -39,6 +39,7 @@ RE_REFERENCED_FILES := $(foreach file, $(RAW_FILES), $(shell echo $(file) | sed 
 PROCESSED_FILES := $(foreach file, $(RAW_FILES), $(shell echo $(file) | sed 's|data/raw/sub-[^/]*/ses-[^/]*/\(.*\).vhdr|data/processed/\1.fif|'))
 
 ## Make Dataset
+
 data: requirements $(RE_REFERENCED_FILES) $(PROCESSED_FILES)
 data/processed/%-average_reference.fif: data/raw/sub-*/ses-*/%.vhdr
 	$(PYTHON_INTERPRETER) auditory_intention_decoding_data_analysis/dataset.py $< $@ true
@@ -50,6 +51,7 @@ ERP_PLOT_TARGET := "$(FIGURES)/erp-plots/$(DUMMY_FILE)"
 ERP_PLOT_TARGET_AVERAGE_REFERENCE := "$(FIGURES)/erp-plots-average-reference/$(DUMMY_FILE)"
 
 ## Make ERP-plots
+
 erp-plot: $(ERP_PLOT_TARGET) $(ERP_PLOT_TARGET_AVERAGE_REFERENCE)
 $(ERP_PLOT_TARGET): $(PROCESSED_FILES)
 	$(PYTHON_INTERPRETER) $(SRC)/plots/plot_erp.py $^ $@
@@ -60,6 +62,7 @@ $(ERP_PLOT_TARGET_AVERAGE_REFERENCE): $(RE_REFERENCED_FILES)
 SAMPLES_TARGETS := $(PROCESSED_FILES:data/processed/%.fif=data/interim/samples/%-epo.fif)
 
 ## Build samples to be used by eegnet
+
 build-samples: $(SAMPLES_TARGETS)
 data/interim/samples/%-epo.fif: data/processed/%.fif
 	mkdir -p $$(dirname $@)
@@ -71,6 +74,7 @@ EEGNET_ALL := "results/eegnet/all"
 EEGNET_MICHAL := "results/eegnet/all-michal"
 
 ## Train EEGNet
+
 train-eegnet: $(EEGNET_TARGETS) $(EEGNET_ALL) $(EEGNET_MICHAL)
 results/eegnet/%: data/interim/samples/%-epo.fif
 	mkdir -p $@
@@ -90,10 +94,8 @@ PERMUTATION_ANALYSIS_TARGETS := $(EEGNET_TARGETS:results/eegnet/%=results/permut
 PERMUTATION_ANALYSIS_TARGETS += results/permutation-analysis/all.log
 PERMUTATION_ANALYSIS_TARGETS += results/permutation-analysis/all-michal.log
 
-debug:
-	echo $(PERMUTATION_ANALYSIS_TARGETS)
-
 ## Permutation analysis
+
 permutation-analysis: $(PERMUTATION_ANALYSIS_TARGETS)
 results/permutation-analysis/%.log: results/eegnet/%/prediction.pkl
 	mkdir -p $$(dirname $@)
@@ -102,7 +104,9 @@ results/permutation-analysis/%.log: results/eegnet/%/prediction.pkl
 
 #--------------------------------------------------------------------------------
 
-all: requirements data erp-plot
+## Make all rules
+
+all: requirements data erp-plot build-samples train-eegnet permutation-analysis
 
 
 #################################################################################
