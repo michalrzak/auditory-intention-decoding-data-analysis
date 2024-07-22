@@ -2,11 +2,11 @@
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Dict, List
 
 import matplotlib.pyplot as plt
 import mne
 import numpy as np
-import numpy.typing as npt
 import typer
 
 from auditory_intention_decoding_data_analysis.config import DUMMY_FILE_NAME
@@ -23,8 +23,8 @@ class Tagger:
 
 @dataclass
 class Sample:
-    options: npt.NDArray
-    targets: npt.NDArray
+    options: np.array
+    targets: np.array
 
     def __post_init__(self) -> None:
         assert self.options.ndim == self.targets.ndim
@@ -45,7 +45,7 @@ F_SAMPLING = 1000
 
 @app.command()
 def main(
-        input_files: list[Path],
+        input_files: List[Path],
         output_dummy_file: Path
 ):
     assert all([input_file.is_file() for input_file in input_files])
@@ -55,7 +55,7 @@ def main(
     output_folder = output_dummy_file.parent
     output_folder.mkdir(parents=True, exist_ok=True)
 
-    data_samples: list[dict[str, Sample]] = []
+    data_samples: List[Dict[str, Sample]] = []
 
     for input_file in input_files:
         raw = mne.io.read_raw_fif(input_file)
@@ -85,11 +85,11 @@ def main(
 
     # %% collect across files
 
-    samples_option: dict[str, npt.NDArray] = defaultdict(lambda: np.zeros((126, int((TMAX - TMIN) * 1000 + 1))))
-    n_samples_option: dict[str, int] = defaultdict(lambda: 0)
+    samples_option: Dict[str, np.array] = defaultdict(lambda: np.zeros((126, int((TMAX - TMIN) * 1000 + 1))))
+    n_samples_option: Dict[str, int] = defaultdict(lambda: 0)
 
-    samples_target: dict[str, npt.NDArray] = defaultdict(lambda: np.zeros((126, int((TMAX - TMIN) * 1000 + 1))))
-    n_samples_target: dict[str, int] = defaultdict(lambda: 0)
+    samples_target: Dict[str, np.array] = defaultdict(lambda: np.zeros((126, int((TMAX - TMIN) * 1000 + 1))))
+    n_samples_target: Dict[str, int] = defaultdict(lambda: 0)
 
     for data_sample in data_samples:
 

@@ -1,8 +1,9 @@
 # Data
 /data/
 
-# figures
-reports/figures/
+# reports
+reports/
+
 
 # Mac OS-specific storage files
 .DS_Store

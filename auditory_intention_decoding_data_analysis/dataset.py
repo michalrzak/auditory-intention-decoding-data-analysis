@@ -1,7 +1,7 @@
 import csv
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict, Optional, Tuple
 
 import mne
 import numpy as np
@@ -14,7 +14,7 @@ mne.use_log_level("warning")
 app = typer.Typer()
 
 
-def get_trigger_from_annotation(annotation: dict[str, Any]) -> tuple[int, float] | None:
+def get_trigger_from_annotation(annotation: Dict[str, Any]) -> Optional[Tuple[int, float]]:
     stimulus = annotation["description"]
     match = re.search(r"Stimulus/S( )*", stimulus)
 
