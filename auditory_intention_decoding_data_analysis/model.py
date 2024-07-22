@@ -2,10 +2,10 @@ import functools
 from dataclasses import dataclass
 from enum import Enum
 from os import PathLike
-from typing import List, Optional, Tuple
 
 import mne
 import numpy as np
+import numpy.typing as npt
 
 
 class ETagger(Enum):
@@ -131,24 +131,24 @@ def get_target_start_trigger(tagger: ETagger) -> int:
 @dataclass
 class Data:
     raw: mne.io.Raw
-    ch_names: List[str]
+    ch_names: list[str]
     fs: int
-    triggers: List[Tuple[int, int]]
+    triggers: list[tuple[int, int]]
 
     @functools.cached_property
-    def array(self) -> np.array:
+    def array(self) -> npt.NDArray[np.inexact]:
         return self.raw.get_data()
 
 
 @dataclass(frozen=True)
 class Sample:
     tagger: ETagger
-    interval: Tuple[int, int]
+    interval: tuple[int, int]
     audio_file: PathLike
-    i_target: Optional[int]
+    i_target: int | None
     primer: int
-    option_texts: List[str]
-    option_intervals: List[Tuple[int, int]]
+    option_texts: list[str]
+    option_intervals: list[tuple[int, int]]
 
     def __post_init__(self) -> None:
         if self.interval[0] >= self.interval[1]:
