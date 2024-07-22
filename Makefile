@@ -69,14 +69,14 @@ data/interim/samples/%-epo.fif: data/processed/%.fif
 	$(PYTHON_INTERPRETER) $(SRC)/models/build_samples.py $^ $@ --sfreq 128 --tmin '-0.5' --tmax 3
 #--------------------------------------------------------------------------------
 
-EEGNET_TARGETS := $(SAMPLES_TARGETS:data/interim/samples/%-epo.fif=results/eegnet/%)
-EEGNET_ALL := "results/eegnet/all"
-EEGNET_MICHAL := "results/eegnet/all-michal"
+EEGNET_TARGETS := $(SAMPLES_TARGETS:data/interim/samples/%-epo.fif=reports/eegnet/%)
+EEGNET_ALL := "reports/eegnet/all"
+EEGNET_MICHAL := "reports/eegnet/all-michal"
 
 ## Train EEGNet
 
 train-eegnet: $(EEGNET_TARGETS) $(EEGNET_ALL) $(EEGNET_MICHAL)
-results/eegnet/%: data/interim/samples/%-epo.fif
+reports/eegnet/%: data/interim/samples/%-epo.fif
 	mkdir -p $@
 	$(PYTHON_INTERPRETER) $(SRC)/models/eegnet.py $^ $@ 200
 	touch $@
@@ -90,14 +90,14 @@ $(EEGNET_MICHAL): data/interim/samples/sub-michal_ses-01-epo.fif data/interim/sa
 	touch $@
 #--------------------------------------------------------------------------------
 
-PERMUTATION_ANALYSIS_TARGETS := $(EEGNET_TARGETS:results/eegnet/%=results/permutation-analysis/%.log)
-PERMUTATION_ANALYSIS_TARGETS += results/permutation-analysis/all.log
-PERMUTATION_ANALYSIS_TARGETS += results/permutation-analysis/all-michal.log
+PERMUTATION_ANALYSIS_TARGETS := $(EEGNET_TARGETS:reports/eegnet/%=reports/permutation-analysis/%.log)
+PERMUTATION_ANALYSIS_TARGETS += reports/permutation-analysis/all.log
+PERMUTATION_ANALYSIS_TARGETS += reports/permutation-analysis/all-michal.log
 
 ## Permutation analysis
 
 permutation-analysis: $(PERMUTATION_ANALYSIS_TARGETS)
-results/permutation-analysis/%.log: results/eegnet/%/prediction.pkl
+reports/permutation-analysis/%.log: reports/eegnet/%/prediction.pkl
 	mkdir -p $$(dirname $@)
 	$(PYTHON_INTERPRETER) $(SRC)/models/permutation_analysis.py $^ | tee $@
 
