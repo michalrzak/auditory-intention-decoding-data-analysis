@@ -30,6 +30,68 @@ class Sample:
         assert self.options.ndim == self.targets.ndim
 
 
+# def plot_erp(average_option: np.array,
+#              average_target: np.array,
+#              channel_selection_indices: List[int],
+#              channel_selection_labels: List[str],
+#              output_file: Path) -> None:
+#     def _verify_average(average: np.array) -> None:
+#         assert average.ndim == 2
+#         assert average.shape[0] == 126
+#         assert average.shape[1] == 2501
+#
+#     _verify_average(average_option)
+#     _verify_average(average_target)
+#
+#     average_option_selected = average_option[channel_selection_indices, :] * (10 ** 6)
+#     average_target_selected = average_target[channel_selection_indices, :] * (10 ** 6)
+#
+#     fig, axs = plt.subplots(len(channel_selection_labels))
+#     fig.set_figheight(9)
+#     fig.set_figwidth(7.5)
+#     for channel_option, channel_target, ax, label in zip(average_option_selected,
+#                                                          average_target_selected,
+#                                                          axs,
+#                                                          channel_selection_labels):
+#         ax.plot(channel_option, label="option")
+#         ax.plot(channel_target, label="target")
+#         ax.set_xticks(np.arange(0, 2500, 500), np.arange(-0.5, 2, 0.5))
+#         ax.set_xlabel("t [s]")
+#         ax.set_ylabel("U [μV]")
+#         ax.set_title(label)
+#
+#     plt.legend()
+#     plt.tight_layout()
+#     plt.savefig(output_file)
+#     plt.close()
+
+
+def plot_erp(average_option: np.array,
+             average_target: np.array,
+             channel_selection_indices: List[int],
+             channel_selection_labels: List[str],
+             output_file: Path) -> None:
+    def _verify_average(average: np.array) -> None:
+        assert average.ndim == 2
+        assert average.shape[0] == 126
+        assert average.shape[1] == 2501
+
+    _verify_average(average_option)
+    _verify_average(average_target)
+
+    plt.figure(figsize=(7.5, 3))
+    plt.plot(np.mean(average_option, axis=0) * (10 ** 6), label="option")
+    plt.plot(np.mean(average_target, axis=0) * (10 ** 6), label="target")
+    plt.xticks(np.arange(0, 2500, 500), np.arange(-0.5, 2, 0.5))
+    plt.xlabel("t [s]")
+    plt.ylabel("U [μV]")
+
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(output_file)
+    plt.close()
+
+
 TRIGGERS = {
     "RAW":      Tagger(option=50, target=70),
     "AM":       Tagger(option=51, target=71),
@@ -57,8 +119,13 @@ def main(
 
     data_samples: List[Dict[str, Sample]] = []
 
+    channel_labels = ["Cz", "CPz", "Pz"]
+    channel_indices = None
+
     for input_file in input_files:
         raw = mne.io.read_raw_fif(input_file)
+        if channel_indices is None:
+            channel_indices = [raw.ch_names.index(ch) for ch in channel_labels]
 
         collected_erp = {}
         for name, triggers in TRIGGERS.items():
@@ -68,8 +135,8 @@ def main(
             options_epochs: mne.Epochs = epochs[f"Stimulus/S {triggers.option}"]
             targets_epochs: mne.Epochs = epochs[f"Stimulus/S {triggers.target}"]
 
-            options = options_epochs.get_data(copy=False)
-            targets = targets_epochs.get_data(copy=False)
+            options = options_epochs.get_data()
+            targets = targets_epochs.get_data()
 
             baseline_option = np.repeat(np.mean(options[:, :, :int((0 - TMIN) * 1000)], axis=2)[:, :, np.newaxis],
                                         options.shape[2], 2)
@@ -83,6 +150,8 @@ def main(
 
         data_samples.append(collected_erp)
 
+    assert channel_indices is not None
+    assert len(channel_indices) == len(channel_labels)
     # %% collect across files
 
     samples_option: Dict[str, np.array] = defaultdict(lambda: np.zeros((126, int((TMAX - TMIN) * 1000 + 1))))
@@ -108,10 +177,11 @@ def main(
         n_o = n_samples_option[tagger]
         n_t = n_samples_target[tagger]
 
-        plt.plot(np.mean(o / n_o, axis=0))
-        plt.plot(np.mean(t / n_t, axis=0))
-        plt.savefig(output_folder / f"ERP-{tagger}.png")
-        plt.close()
+        plot_erp(o / n_o,
+                 t / n_t,
+                 channel_indices,
+                 channel_labels,
+                 output_folder / f"ERP-{tagger}.png")
 
     # %% collect across taggers
 
@@ -128,11 +198,11 @@ def main(
         all_target += sample
         n_target += n
 
-    # %% do plots
-    plt.plot(np.mean(all_option / n_option, axis=0))
-    plt.plot(np.mean(all_target / n_target, axis=0))
-    plt.savefig(output_folder / "ERP-global.png")
-    plt.close()
+    plot_erp(all_option / n_option,
+             all_target / n_target,
+             channel_indices,
+             channel_labels,
+             output_folder / "ERP-global.png")
 
     output_dummy_file.touch()
 

@@ -48,14 +48,14 @@ data/processed/%.fif: data/raw/sub-*/ses-*/%.vhdr
 
 #--------------------------------------------------------------------------------
 ERP_PLOT_TARGET := "$(FIGURES)/erp-plots/$(DUMMY_FILE)"
-ERP_PLOT_TARGET_AVERAGE_REFERENCE := "$(FIGURES)/erp-plots-average-reference/$(DUMMY_FILE)"
+ERP_PLOT_TARGET_PER_SUBJECT := $(PROCESSED_FILES:data/processed/%.fif=$(FIGURES)/erp-plots-per-subject/%/$(DUMMY_FILE))
 
 ## Make ERP-plots
 
-erp-plot: $(ERP_PLOT_TARGET) $(ERP_PLOT_TARGET_AVERAGE_REFERENCE)
+erp-plot: $(ERP_PLOT_TARGET) $(ERP_PLOT_TARGET_PER_SUBJECT)
 $(ERP_PLOT_TARGET): $(PROCESSED_FILES)
 	$(PYTHON_INTERPRETER) $(SRC)/plots/plot_erp.py $^ $@
-$(ERP_PLOT_TARGET_AVERAGE_REFERENCE): $(RE_REFERENCED_FILES)
+$(FIGURES)/erp-plots-per-subject/%/$(DUMMY_FILE): data/processed/%.fif
 	$(PYTHON_INTERPRETER) $(SRC)/plots/plot_erp.py $^ $@
 #--------------------------------------------------------------------------------
 
