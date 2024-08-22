@@ -14,7 +14,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.optimizers import Adam
 
 from auditory_intention_decoding_data_analysis.external.EEGModels import EEGNet
-from auditory_intention_decoding_data_analysis.models.utils import Prediction, file_to_label_file
+from auditory_intention_decoding_data_analysis.models.utils import Prediction, file_to_label_file, read_labels_file
 
 mne.use_log_level("warning")
 app = typer.Typer()
@@ -22,13 +22,6 @@ app = typer.Typer()
 
 def eegnet_reshape(data: np.ndarray) -> np.ndarray:
     return data.reshape((data.shape[0], data.shape[1], data.shape[2], 1))
-
-
-def read_labels_file(labels_file: Path) -> pd.DataFrame:
-    df = pd.read_csv(labels_file)
-    assert "Target" in df.columns and "Tagger" in df.columns
-
-    return df
 
 
 @app.command()
