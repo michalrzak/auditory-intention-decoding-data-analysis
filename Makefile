@@ -67,7 +67,20 @@ build-samples: $(SAMPLES_TARGETS)
 data/interim/samples/%-epo.fif: data/processed/%.fif
 	mkdir -p $$(dirname $@)
 	$(PYTHON_INTERPRETER) $(SRC)/models/build_samples.py $^ $@ --sfreq 128 --tmin '-0.5' --tmax 3
+
 #--------------------------------------------------------------------------------
+
+SAMPLES_TF_TARGETS := $(PROCESSED_FILES:data/processed/%.fif=data/interim/samples-tf/%-epo.fif)
+
+## Build samples to be used by the time-frequency analysis
+
+build-samples-tf: $(SAMPLES_TF_TARGETS)
+data/interim/samples-tf/%-epo.fif: data/processed/%.fif
+	mkdir -p $$(dirname $@)
+	$(PYTHON_INTERPRETER) $(SRC)/models/build_samples.py $^ $@ --tmin '-1.5' --tmax 5
+
+#--------------------------------------------------------------------------------
+
 
 EEGNET_TARGETS := $(SAMPLES_TARGETS:data/interim/samples/%-epo.fif=reports/eegnet/%)
 EEGNET_ALL := "reports/eegnet/all"
@@ -103,6 +116,19 @@ reports/permutation-analysis/%.log: reports/eegnet/%/prediction.pkl
 
 
 #--------------------------------------------------------------------------------
+
+TIME_FREQUENCY_TARGETS := $(SAMPLES_TF_TARGETS:data/interim/samples-tf/%-epo.fif=reports/figures/time-frequency/%)
+
+## Time-frequency plots
+time-frequency-analysis: $(TIME_FREQUENCY_TARGETS)
+reports/figures/time-frequency/%: data/interim/samples-tf/%-epo.fif
+	mkdir -p $$(dirname $@)
+	$(PYTHON_INTERPRETER) $(SRC)/plots/time_frequency.py $^ $@
+	touch $@
+
+
+#--------------------------------------------------------------------------------
+
 
 ## Make all rules
 
