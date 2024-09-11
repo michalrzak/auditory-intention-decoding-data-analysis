@@ -1,62 +1,57 @@
-# auditory-intention-decoding-data-analysis
+# Auditory Intention Decoding data-analysis
 
 <a target="_blank" href="https://cookiecutter-data-science.drivendata.org/">
     <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
 </a>
 
-Data analysis repository for my master thesis. Used to generate all results and figures presented in the theisis.
+This project was developed as part of my master thesis - _Towards an intention decoding auditory BCI_. The thesis aims
+to investigate and lay the groundwork for a potential future brain-computer interface (BCI) paradigm, where a system
+could decode an attended stimulus given sequentially presented auditory stimuli.
 
-## Project Organization
+This repository contains the data-analysis code used to generate the results and figures presented in the thesis.
+
+The experiment codebase can be found under: <https://github.com/michalrzak/auditory-intention-decoding>
+
+## Abstract
+
+...
+
+## Running the codebase
+
+The repository is based around a Makefile, so make is required to reproduce the results (this can be a bit tedious on
+windows).
+
+### Installing the requirements
+
+The requirements of this repository are managed with the tool [Poetry](https://python-poetry.org/), hence it needs to be
+installed before any other steps can be taken.
+
+After installing Poetry, you can run the following make rule to create an environment with all dependencies:
 
 ```
-├── LICENSE            <- Open-source license if one is chosen
-├── Makefile           <- Makefile with convenience commands like `make data` or `make train`
-├── README.md          <- The top-level README for developers using this project.
-├── data
-│   ├── external       <- Data from third party sources.
-│   ├── interim        <- Intermediate data that has been transformed.
-│   ├── processed      <- The final, canonical data sets for modeling.
-│   └── raw            <- The original, immutable data dump.
-│
-├── docs               <- A default mkdocs project; see mkdocs.org for details
-│
-├── models             <- Trained and serialized models, model predictions, or model summaries
-│
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-│                         the creator's initials, and a short `-` delimited description, e.g.
-│                         `1.0-jqp-initial-data-exploration`.
-│
-├── pyproject.toml     <- Project configuration file with package metadata for auditory_intention_decoding_data_analysis
-│                         and configuration for tools like black
-│
-├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-│
-├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-│   └── figures        <- Generated graphics and figures to be used in reporting
-│
-├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-│                         generated with `pip freeze > requirements.txt`
-│
-├── setup.cfg          <- Configuration file for flake8
-│
-└── auditory_intention_decoding_data_analysis                <- Source code for use in this project.
-    │
-    ├── __init__.py    <- Makes auditory_intention_decoding_data_analysis a Python module
-    │
-    ├── data           <- Scripts to download or generate data
-    │   └── make_dataset.py
-    │
-    ├── features       <- Scripts to turn raw data into features for modeling
-    │   └── build_features.py
-    │
-    ├── models         <- Scripts to train models and then use trained models to make
-    │   │                 predictions
-    │   ├── predict_model.py
-    │   └── train_model.py
-    │
-    └── visualization  <- Scripts to create exploratory and results oriented visualizations
-        └── visualize.py
+make requirements
 ```
 
---------
+**Note**: I prefer to have my virtual environment saved in the repository folder, which is not the default behavior of
+Poetry. To change this, follow the instructions outlined
+in: <https://python-poetry.org/docs/configuration/#virtualenvsin-project>.
 
+### Generating all results
+
+After installing the requirements use the following make rule to generate all plots used throughout the thesis. Note
+that this will take a _VERY_ long time to run.
+
+```
+make all
+```
+
+### Generating results one-by-one
+
+The results can also be generated one-by-one using their individual make rules. To get a list of all available rules
+run:
+
+```
+make
+```
+
+The command will list all possible make rules along with a short description of what each rule generates
