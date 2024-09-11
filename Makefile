@@ -132,7 +132,7 @@ reports/figures/time-frequency/%: data/interim/samples-tf/%-epo.fif
 
 ## Make all rules
 
-all: requirements data erp-plot build-samples train-eegnet permutation-analysis
+all: requirements data erp-plot build-samples train-eegnet permutation-analysis time-frequency-analysis
 
 
 #################################################################################
