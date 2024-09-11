@@ -16,8 +16,7 @@ DUMMY_FILE = ".dummy"
 
 ## Install Python Dependencies
 
-requirements: poetry.lock
-poetry.lock: pyproject.toml
+requirements:
 	poetry install
 
 
@@ -132,7 +131,7 @@ reports/figures/time-frequency/%: data/interim/samples-tf/%-epo.fif
 
 ## Make all rules
 
-all: requirements data erp-plot build-samples train-eegnet permutation-analysis time-frequency-analysis
+all: data erp-plot build-samples train-eegnet permutation-analysis time-frequency-analysis
 
 
 #################################################################################
