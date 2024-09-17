@@ -14,7 +14,9 @@ The experiment codebase can be found under: <https://github.com/michalrzak/audit
 
 ## Abstract
 
-...
+Despite its significant potential, the auditory brain-computer interface (BCI) field remains underexplored. Current paradigms predominantly focus on decoding which audio source among several a user is attending to, limiting their applicability in real-world scenarios. This thesis addresses this gap by conceptualizing and testing a novel BCI paradigm centered around auditory stimulation. Our approach, Auditory Intention Decoding (AID), is classified as a reactive BCI, relying on automatic brain responses rather than direct user input. The AID paradigm aims to infer a user's intended choice among multiple presented options, from the user's automatic brain response, without them needing to take any explicit action.
+
+Additionally, we investigate the effectiveness of modulating the auditory stimuli with distinct waveforms, akin to techniques used in visually evoked potentials, to enhance target decoding accuracy. These concepts were empirically tested through a controlled experiment, and the results, while showing a discernible effect, suggest that the paradigm in its current form is not yet robust enough for practical application. Nevertheless, the findings presented here lay a foundation for future research, offering a promising direction for developing more useful auditory BCIs
 
 ## Running the codebase
 
