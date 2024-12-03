@@ -4,7 +4,7 @@
     <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
 </a>
 
-This project was developed as part of my master thesis - _Towards an intention decoding auditory BCI_. The thesis aims
+This project was developed as part of my [master thesis](https://repositorium.meduniwien.ac.at/obvumwhs/content/titleinfo/11238767) - _Towards an intention decoding auditory BCI_. The thesis aims
 to investigate and lay the groundwork for a potential future brain-computer interface (BCI) paradigm, where a system
 could decode an attended stimulus given sequentially presented auditory stimuli.
 
